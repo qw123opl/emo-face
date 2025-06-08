@@ -1,0 +1,40 @@
+# Git 相關文件
+.git
+.gitignore
+
+# Python 相關
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# 虛擬環境
+venv/
+env/
+.venv/
+
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 日誌文件
+*.log
+
+# 臨時文件
+.tmp/
+temp/
+
+# macOS 系統文件
+.DS_Store
+
+# 環境配置文件（實際的 .env 不應該包含在鏡像中）
+.env
+
+# 文檔文件
+README.md
+LICENSE
+*.md
