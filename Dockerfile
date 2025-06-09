@@ -4,14 +4,24 @@ FROM python:3.11-slim AS builder
 # 設定工作目錄
 WORKDIR /app
 
-# 創建虛擬環境
-RUN python -m venv /app/.venv
+# Install uv
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+# This should make 'uv' available in the PATH.
+# If installed to /root/.cargo/bin, ensure it's in PATH for subsequent RUN commands.
+# The official installer says it installs to $CARGO_HOME/bin, which is ~/.cargo/bin by default.
+# For root user, this is /root/.local/bin as per the installer output.
+ENV PATH="/root/.local/bin:${PATH}"
 
-# 複製 requirements.txt
-COPY requirements.txt .
+# Create virtual environment using uv
+RUN uv venv /app/.venv
 
-# 激活虛擬環境並安裝依賴
-RUN . /app/.venv/bin/activate && pip install --no-cache-dir -r requirements.txt
+# Copy project and lock files
+COPY pyproject.toml .
+COPY uv.lock .
+
+# Activate virtual environment and install dependencies using uv
+RUN . /app/.venv/bin/activate && uv pip sync pyproject.toml
 
 # 第二階段 - 運行階段
 FROM python:3.11-slim AS runtime

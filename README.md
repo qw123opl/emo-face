@@ -30,6 +30,57 @@
 
 請依照以下步驟，在本機上啟動並運行這個專案。
 
+### 本機開發環境設定 (使用 uv)
+
+如果你想在本地進行開發或修改，建議使用 `uv` 來管理 Python 虛擬環境和依賴。
+
+1.  **安裝 uv**
+
+    你可以透過以下指令安裝 `uv` (適用於 Linux 和 macOS):
+    ```sh
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    ```
+    更多安裝方式請參考 [uv 官方文檔](https://github.com/astral-sh/uv#installation)。
+    安裝完成後，請依照提示將 `uv` 加入到你的 PATH 環境變數中，或重新啟動你的終端機。
+
+2.  **Clone 專案庫** (如果尚未執行)
+    ```sh
+    git clone [https://github.com/](https://github.com/)[你的GitHub帳號]/[你的專案名稱].git
+    cd [你的專案名稱]
+    ```
+
+3.  **建立並啟用虛擬環境**
+    ```sh
+    # 在專案根目錄執行
+    uv venv
+    source .venv/bin/activate  # macOS / Linux
+    # .venv\Scripts\activate   # Windows
+    ```
+
+4.  **安裝依賴**
+
+    專案依賴定義在 `pyproject.toml` 檔案中，並使用 `uv.lock` 鎖定版本。執行以下指令安裝：
+    ```sh
+    uv sync
+    ```
+    這將會安裝 `pyproject.toml` 中定義的所有依賴。
+
+5.  **設定環境變數**
+    * 將 `.env.example` 檔案複製一份並命名為 `.env`。
+    * 在 `.env` 檔案中，填入你的 LLM API Key。
+    ```
+    # .env
+    LLM_API_KEY='在這裡貼上你的API_KEY'
+    ```
+
+6.  **啟動應用程式** (開發模式)
+    ```sh
+    flask run
+    ```
+    然後在瀏覽器中訪問 `http://localhost:5000` (Flask 預設埠號) 或 Dockerfile/docker-compose.yml 中設定的埠號。
+
+**注意:** `requirements.txt` 檔案已不再使用，所有依賴均由 `pyproject.toml` 和 `uv.lock` 管理。
+
 ### 先決條件 (Prerequisites)
 
 請確保你的電腦已安裝以下軟體：
