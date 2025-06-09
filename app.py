@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
-from openai import OpenAI, DefaultHttpxClient
+from openai import OpenAI
+import httpx # Added
 import json
 import re
 
@@ -38,8 +39,9 @@ if LLM_PROVIDER == 'openai' and LLM_API_KEY:
                     os.environ.get('HTTP_PROXY')
 
         if proxy_url:
-            print(f"💡 使用代理伺服器: {proxy_url}")
-            custom_httpx_client = DefaultHttpxClient(proxy=proxy_url)
+            print(f"💡 使用代理伺服器 (httpx.Client): {proxy_url}")
+            # Using httpx.Client directly with 'proxies' argument
+            custom_httpx_client = httpx.Client(proxies=proxy_url)
             client = OpenAI(api_key=LLM_API_KEY, http_client=custom_httpx_client)
         else:
             client = OpenAI(api_key=LLM_API_KEY)
