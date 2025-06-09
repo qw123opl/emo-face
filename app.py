@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import os
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, DefaultHttpxClient
 import json
 import re
 
@@ -33,13 +33,23 @@ else:
 client = None
 if LLM_PROVIDER == 'openai' and LLM_API_KEY:
     try:
-        client = OpenAI(api_key=LLM_API_KEY)
+        proxy_url = os.environ.get('PROXY_URL') or \
+                    os.environ.get('HTTPS_PROXY') or \
+                    os.environ.get('HTTP_PROXY')
+
+        if proxy_url:
+            print(f"💡 使用代理伺服器: {proxy_url}")
+            custom_httpx_client = DefaultHttpxClient(proxy=proxy_url)
+            client = OpenAI(api_key=LLM_API_KEY, http_client=custom_httpx_client)
+        else:
+            client = OpenAI(api_key=LLM_API_KEY)
+
         print(f"✅ OpenAI 客戶端初始化成功，使用模型: {CURRENT_MODEL}")
     except Exception as e:
         print(f"❌ OpenAI 客戶端初始化失敗: {e}")
         client = None
 else:
-    print(f"⚠️  OpenAI 客戶端未初始化 - Provider: {LLM_PROVIDER}, API Key: {'已設置' if LLM_API_KEY else '未設置'}")
+    print(f"⚠️ OpenAI 客戶端未初始化 - Provider: {LLM_PROVIDER}, API Key: {'已設置' if LLM_API_KEY else '未設置'}")
 
 def analyze_emotion(text):
     """使用 OpenAI 分析文本情緒"""
